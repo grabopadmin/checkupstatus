@@ -1,48 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Website Downtime Checker</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckUpStatus - Is It Down Everywhere?</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .container {
             background: white;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-top: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
         }
         h1 {
             color: #2d3436;
-            text-align: center;
             margin-bottom: 10px;
-            font-size: 2.5em;
+            font-size: 2.8em;
         }
-        .subtitle {
-            text-align: center;
+        .tagline {
             color: #7f8c8d;
             margin-bottom: 40px;
-            font-size: 1.2em;
+            font-size: 1.3em;
+            font-weight: 500;
         }
         .input-group {
             margin: 30px 0;
+            text-align: left;
         }
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-weight: 600;
             color: #2d3436;
-            font-size: 1.1em;
+            font-size: 1.2em;
         }
         .url-input {
             display: flex;
@@ -50,11 +56,10 @@
         }
         input {
             flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 18px;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            font-size: 18px;
         }
         input:focus {
             border-color: #3498db;
@@ -63,11 +68,11 @@
         button {
             background: #3498db;
             color: white;
-            padding: 15px 30px;
+            padding: 18px 40px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
             transition: all 0.3s;
         }
@@ -75,150 +80,128 @@
             background: #2980b9;
             transform: translateY(-2px);
         }
-        button:disabled {
-            background: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .status-card {
-            margin: 30px 0;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            display: none;
-        }
-        .status-up {
-            background: #d4edda;
-            border: 2px solid #c3e6cb;
-            color: #155724;
-        }
-        .status-down {
-            background: #f8d7da;
-            border: 2px solid #f5c6cb;
-            color: #721c24;
-        }
-        .status-error {
-            background: #fff3cd;
-            border: 2px solid #ffeaa7;
-            color: #856404;
-        }
-        .status-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-        .status-title {
-            font-size: 2em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .status-details {
-            font-size: 1.1em;
-            margin: 10px 0;
-        }
-        .response-time {
-            background: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            display: inline-block;
-            margin: 10px;
-            font-weight: bold;
-        }
         .quick-check {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 30px 0;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 25px 0;
         }
         .quick-btn {
             background: #95a5a6;
+            color: white;
             padding: 15px;
-            text-align: center;
+            border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: 600;
+            transition: all 0.3s;
         }
         .quick-btn:hover {
             background: #7f8c8d;
             transform: translateY(-2px);
         }
-        .history {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
+        .result {
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 15px;
             display: none;
+            text-align: left;
         }
-        .history-item {
-            padding: 10px;
-            margin: 5px 0;
+        .status-up {
+            background: #d4edda;
+            border: 3px solid #28a745;
+            color: #155724;
+        }
+        .status-down {
+            background: #f8d7da;
+            border: 3px solid #dc3545;
+            color: #721c24;
+        }
+        .status-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .status-details {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .response-info {
             background: white;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
         }
         .loading {
             display: none;
-            text-align: center;
-            margin: 20px 0;
+            margin: 30px 0;
         }
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-            margin: 0 auto;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .down-reasons {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .down-reasons ul {
+            text-align: left;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .down-reasons li {
+            margin: 8px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🌐 Website Status Checker</h1>
-        <div class="subtitle">Check if a website is down for everyone or just you</div>
+        <h1>🌐 CheckUpStatus</h1>
+        <div class="tagline">Is it down for everyone or just you? Find out instantly.</div>
         
         <div class="input-group">
-            <label for="websiteUrl">Enter Website URL:</label>
+            <label for="websiteUrl">Enter Website URL to Check:</label>
             <div class="url-input">
                 <input type="text" id="websiteUrl" placeholder="https://example.com" value="https://">
-                <button onclick="checkWebsite()" id="checkBtn">Check Status</button>
+                <button onclick="checkWebsite()">Check Status</button>
             </div>
         </div>
 
         <div class="quick-check">
-            <div class="quick-btn" onclick="checkQuick('https://google.com')">Google</div>
-            <div class="quick-btn" onclick="checkQuick('https://github.com')">GitHub</div>
-            <div class="quick-btn" onclick="checkQuick('https://twitter.com')">Twitter</div>
-            <div class="quick-btn" onclick="checkQuick('https://stackoverflow.com')">Stack Overflow</div>
+            <button class="quick-btn" onclick="checkQuick('https://google.com')">Google</button>
+            <button class="quick-btn" onclick="checkQuick('https://youtube.com')">YouTube</button>
+            <button class="quick-btn" onclick="checkQuick('https://github.com')">GitHub</button>
+            <button class="quick-btn" onclick="checkQuick('https://twitter.com')">Twitter</button>
+            <button class="quick-btn" onclick="checkQuick('https://netflix.com')">Netflix</button>
         </div>
-
+        
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Checking website status...</p>
+            <p style="font-size: 1.2em; margin-top: 15px;">Checking if website is down for everyone...</p>
         </div>
-
-        <div class="status-card" id="statusCard">
-            <div class="status-icon" id="statusIcon">🔍</div>
-            <div class="status-title" id="statusTitle">Checking...</div>
+        
+        <div class="result" id="result">
+            <div class="status-title" id="statusTitle">Status Check</div>
             <div class="status-details" id="statusDetails"></div>
-            <div class="response-time" id="responseTime"></div>
-        </div>
-
-        <div class="history" id="history">
-            <h3>📊 Recent Checks</h3>
-            <div id="historyList"></div>
+            <div class="response-info" id="responseTime"></div>
         </div>
     </div>
 
     <script>
-        let checkHistory = JSON.parse(localStorage.getItem('websiteCheckHistory')) || [];
-
         function checkQuick(url) {
             document.getElementById('websiteUrl').value = url;
             checkWebsite();
@@ -226,146 +209,74 @@
 
         async function checkWebsite() {
             const urlInput = document.getElementById('websiteUrl').value.trim();
-            const checkBtn = document.getElementById('checkBtn');
             const loading = document.getElementById('loading');
-            const statusCard = document.getElementById('statusCard');
-            const statusIcon = document.getElementById('statusIcon');
+            const result = document.getElementById('result');
             const statusTitle = document.getElementById('statusTitle');
             const statusDetails = document.getElementById('statusDetails');
             const responseTime = document.getElementById('responseTime');
-            const history = document.getElementById('history');
 
             if (!urlInput) {
                 alert('Please enter a website URL');
                 return;
             }
 
-            // Validate URL format
+            // Show loading
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
             let url = urlInput;
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 url = 'https://' + url;
             }
 
-            // Show loading
-            checkBtn.disabled = true;
-            checkBtn.textContent = 'Checking...';
-            loading.style.display = 'block';
-            statusCard.style.display = 'none';
-
             try {
                 const startTime = Date.now();
-                
-                // Use a proxy to avoid CORS issues
                 const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
                 const endTime = Date.now();
                 const responseTimeMs = endTime - startTime;
 
                 if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Show success
-                    statusCard.className = 'status-card status-up';
-                    statusIcon.textContent = '✅';
-                    statusTitle.textContent = 'Website is UP';
-                    statusDetails.textContent = `The website is accessible and responding normally.`;
-                    statusDetails.innerHTML += `<br><strong>URL:</strong> ${url}`;
-                    responseTime.textContent = `Response time: ${responseTimeMs}ms`;
-                    
-                    // Add to history
-                    addToHistory(url, 'UP', responseTimeMs);
+                    result.className = 'result status-up';
+                    statusTitle.innerHTML = '✅ <strong>WEBSITE IS UP</strong> - Working Everywhere';
+                    statusDetails.innerHTML = `
+                        <p><strong>Good news!</strong> The website is accessible and responding normally from our servers.</p>
+                        <p>This means the site is <strong>UP FOR EVERYONE</strong> and should be working for you too.</p>
+                        <p>If you're still having issues, it might be:</p>
+                        <ul>
+                            <li>Your internet connection</li>
+                            <li>Your local network or firewall</li>
+                            <li>DNS cache issues on your device</li>
+                            <li>Browser extensions blocking the site</li>
+                        </ul>
+                    `;
+                    responseTime.innerHTML = `<strong>Response Time:</strong> ${responseTimeMs}ms - Fast response indicates good performance`;
                 } else {
                     throw new Error('Website might be down');
                 }
-
             } catch (error) {
-                // Try direct fetch as fallback
-                try {
-                    const startTime = Date.now();
-                    const directResponse = await fetch(url, { 
-                        method: 'HEAD',
-                        mode: 'no-cors'
-                    });
-                    const endTime = Date.now();
-                    const responseTimeMs = endTime - startTime;
-
-                    statusCard.className = 'status-card status-up';
-                    statusIcon.textContent = '✅';
-                    statusTitle.textContent = 'Website is UP';
-                    statusDetails.textContent = `The website is accessible (CORS restricted detailed check).`;
-                    statusDetails.innerHTML += `<br><strong>URL:</strong> ${url}`;
-                    responseTime.textContent = `Response time: ${responseTimeMs}ms`;
-                    
-                    addToHistory(url, 'UP', responseTimeMs);
-                    
-                } catch (directError) {
-                    // Show error
-                    statusCard.className = 'status-card status-down';
-                    statusIcon.textContent = '❌';
-                    statusTitle.textContent = 'Website is DOWN';
-                    statusDetails.textContent = `The website appears to be inaccessible. This could mean:`;
-                    statusDetails.innerHTML += `
-                        <ul style="text-align: left; margin: 10px 0;">
-                            <li>The website is down for everyone</li>
-                            <li>Your internet connection has issues</li>
-                            <li>The website blocked our check</li>
-                            <li>DNS or network problems</li>
+                result.className = 'result status-down';
+                statusTitle.innerHTML = '❌ <strong>WEBSITE APPEARS TO BE DOWN</strong>';
+                statusDetails.innerHTML = `
+                    <div class="down-reasons">
+                        <p><strong>Our check indicates the website is not accessible.</strong></p>
+                        <p>This could mean:</p>
+                        <ul>
+                            <li><strong>Website is down for everyone</strong> - Server issues or maintenance</li>
+                            <li><strong>Network problems</strong> - Routing issues between our servers and the site</li>
+                            <li><strong>Firewall blocking</strong> - The site might be blocking our check</li>
+                            <li><strong>Temporary outage</strong> - Try again in a few minutes</li>
                         </ul>
-                        <strong>URL:</strong> ${url}
-                    `;
-                    responseTime.textContent = 'No response';
-                    
-                    addToHistory(url, 'DOWN', null);
-                }
-            } finally {
-                // Hide loading, show results
-                loading.style.display = 'none';
-                statusCard.style.display = 'block';
-                checkBtn.disabled = false;
-                checkBtn.textContent = 'Check Status';
-                
-                // Show history
-                displayHistory();
-                history.style.display = 'block';
-            }
-        }
-
-        function addToHistory(url, status, responseTime) {
-            const check = {
-                url: url,
-                status: status,
-                responseTime: responseTime,
-                timestamp: new Date().toLocaleString()
-            };
-            
-            checkHistory.unshift(check);
-            // Keep only last 10 checks
-            checkHistory = checkHistory.slice(0, 10);
-            
-            // Save to localStorage
-            localStorage.setItem('websiteCheckHistory', JSON.stringify(checkHistory));
-        }
-
-        function displayHistory() {
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-
-            checkHistory.forEach(check => {
-                const item = document.createElement('div');
-                item.className = 'history-item';
-                item.innerHTML = `
-                    <div>
-                        <strong>${check.url}</strong><br>
-                        <small>${check.timestamp}</small>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="color: ${check.status === 'UP' ? '#27ae60' : '#e74c3c'}; font-weight: bold;">
-                            ${check.status}
-                        </span>
-                        ${check.responseTime ? `<br><small>${check.responseTime}ms</small>` : ''}
+                        <p><em>Note: This check is from our server location. The site might be accessible from other locations.</em></p>
                     </div>
                 `;
-                historyList.appendChild(item);
-            });
+                responseTime.innerHTML = `<strong>Status:</strong> No response received - Site appears to be down`;
+            }
+
+            loading.style.display = 'none';
+            result.style.display = 'block';
+            
+            // Scroll to results
+            result.scrollIntoView({ behavior: 'smooth' });
         }
 
         // Enter key support
@@ -374,12 +285,6 @@
                 checkWebsite();
             }
         });
-
-        // Display existing history on load
-        if (checkHistory.length > 0) {
-            displayHistory();
-            document.getElementById('history').style.display = 'block';
-        }
     </script>
 </body>
 </html>
